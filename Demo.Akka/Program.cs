@@ -14,7 +14,11 @@ actorSystem.UseServiceProvider(provider);
 
 var actor = actorSystem.ActorOf(actorSystem.DI().Props<NotificationActor>());
 actor.Tell("Hello World!!!");
+
+// Need to wait, othersie actor system will stop before completion.
+Console.Read();
+
 actorSystem.Stop(actor);
 
 Console.WriteLine("\n\nPress any key to exit.");
-Console.Read();
+
