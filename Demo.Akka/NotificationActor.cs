@@ -1,18 +1,13 @@
 ﻿using Akka.Actor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Demo.Akka
 {
     public class NotificationActor : UntypedActor
     {
-        private IEmailNotification emailNotification;
+        private readonly IEmailNotification emailNotification;
 
-        public NotificationActor(IEmailNotification emailNotification) 
-        { 
+        public NotificationActor(IEmailNotification emailNotification)
+        {
             this.emailNotification = emailNotification;
         }
 
@@ -20,10 +15,10 @@ namespace Demo.Akka
         {
             Console.WriteLine($"Message received: {message}");
 
-            if (message != null) 
+            if (message != null)
             {
                 emailNotification.Send(message.ToString());
-            }            
+            }
         }
 
         protected override void PreStart()

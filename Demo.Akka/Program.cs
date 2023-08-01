@@ -4,18 +4,26 @@ using Akka.DI.Extensions.DependencyInjection;
 using Demo.Akka;
 using Microsoft.Extensions.DependencyInjection;
 
-var services = new ServiceCollection();
+ServiceCollection services = new();
 services.AddSingleton<IEmailNotification, EmailNotification>();
 services.AddSingleton<NotificationActor>();
-var provider = services.BuildServiceProvider();
+ServiceProvider provider = services.BuildServiceProvider();
 
-using var actorSystem = ActorSystem.Create("test-actor-system");
+// ActorSystem: A collection of actors that exist inside a single process and communicate via in-memory
+// Cluster: A collection of networked ActorSystems whose actors communicate via TCP
+
+// Create ActorSystem (allows actors to talk in-memory)
+using ActorSystem actorSystem = ActorSystem.Create("test-actor-system");
 actorSystem.UseServiceProvider(provider);
 
-var actor = actorSystem.ActorOf(actorSystem.DI().Props<NotificationActor>());
+// Props: Formula used to start an actor
+Props actorProps = Props.Create(() => new PingActor());
+
+// Start actor (of type PingActor) and get actor reference
+IActorRef actor = actorSystem.ActorOf(props: actorSystem.DI().Props<NotificationActor>(), name: "");
 actor.Tell("Hello World!!!");
 
-// Need to wait, othersie actor system will stop before completion.
+// Need to wait, otherwise actor system will stop before completion.
 Console.Read();
 
 actorSystem.Stop(actor);
